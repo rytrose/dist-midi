@@ -1,0 +1,7 @@
+vendor
+credentials.go
+credentials
+*server
+!server/
+*client
+!client/
