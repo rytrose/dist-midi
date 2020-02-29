@@ -12,7 +12,13 @@ import (
 	driver "gitlab.com/gomidi/rtmididrv"
 )
 
+const helpKey = 'h'
+const allKey = 'a'
+
 func main() {
+	// Get SoundMap
+	soundMap := util.GetSoundMap()
+
 	// Create MIDI driver
 	drv, err := driver.New()
 	util.Must(err)
@@ -32,21 +38,48 @@ func main() {
 	fmt.Println(fmt.Sprintf("Using output device (%d) %s", out.Number(), out.String()))
 	util.Must(out.Open())
 
+	// Set up keyboard reading
+	kr := util.NewKeyboardReader()
+	kr.Register(helpKey, func(prev bool, current bool) {
+		if current {
+			fmt.Println("[HELP] Now printing info of played MIDI-mapped sounds.")
+		} else {
+			fmt.Println("[SENDING] Now sending MIDI to play mapped sounds.")
+		}
+	})
+	kr.Register(allKey, func(prev bool, current bool) {
+		fmt.Print(soundMap.String())
+	})
+	kr.Read()
+	defer kr.Close()
+
 	// Create MIDI writer
 	wr := mid.ConnectOut(out)
 
 	// Read input MIDI and write to output
-	rd := mid.NewReader()
+	rd := mid.NewReader(mid.NoLogger())
 	rd.Msg.Channel.NoteOn = func(p *mid.Position, channel, key, vel uint8) {
-		err := wr.NoteOn(key, vel)
-		if err != nil {
-			fmt.Println(fmt.Sprintf("[WARN] Unable to send MIDI to output (local NoteOn): %s", err))
+		if kr.GetState(helpKey) {
+			sound, ok := soundMap.GetEntry(int(key))
+			if ok {
+				fmt.Println(fmt.Sprintf("[HELP] MIDI Note: %d, Title: %s, Hold To Play: %t, Allow Pausing: %t, Loop: %t",
+					key, sound.Title, sound.HoldToPlay, sound.AllowPausing, sound.Loop))
+			} else {
+				fmt.Println(fmt.Sprintf("[HELP] No MIDI sound mapped to MIDI note %d.", key))
+			}
+		} else {
+			err := wr.NoteOn(key, vel)
+			if err != nil {
+				fmt.Println(fmt.Sprintf("[WARN] Unable to send MIDI to output (local NoteOn): %s", err))
+			}
 		}
 	}
 	rd.Msg.Channel.NoteOff = func(p *mid.Position, channel, key, vel uint8) {
-		err := wr.NoteOff(key)
-		if err != nil {
-			fmt.Println(fmt.Sprintf("[WARN] Unable to send MIDI to output (local NoteOff): %s", err))
+		if !kr.GetState(helpKey) {
+			err := wr.NoteOff(key)
+			if err != nil {
+				fmt.Println(fmt.Sprintf("[WARN] Unable to send MIDI to output (local NoteOff): %s", err))
+			}
 		}
 	}
 
@@ -57,6 +90,10 @@ func main() {
 	client, _ := util.GetPubsubTopic()
 	defer client.Close()
 	sub := client.Subscription("server")
+
+	// Print description and state
+	fmt.Println(util.Description(true))
+	fmt.Println("[SENDING] Now sending MIDI to play mapped sounds.")
 
 	// *Subscription.Receive blocks
 	err = sub.Receive(context.Background(), func(c context.Context, m *pubsub.Message) {
