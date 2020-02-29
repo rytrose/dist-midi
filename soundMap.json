@@ -1,0 +1,68 @@
+{
+    "48": {
+        "title": "Ryan's Ahh",
+        "holdToPlay": true,
+        "allowPausing": false,
+        "loop": false
+    },
+    "49": {
+        "title": "Orchestra Pow from Vernal Crusade Theme",
+        "holdToPlay": true,
+        "allowPausing": false,
+        "loop": false
+    },
+    "60": {
+        "title": "Vernal Crusade Theme",
+        "holdToPlay": false,
+        "allowPausing": false,
+        "loop": false
+    },
+    "61": {
+        "title": "Campfire",
+        "holdToPlay": false,
+        "allowPausing": false,
+        "loop": false
+    },
+    "62": {
+        "title": "Stroll",
+        "holdToPlay": false,
+        "allowPausing": false,
+        "loop": false
+    },
+    "63": {
+        "title": "Jaunt",
+        "holdToPlay": false,
+        "allowPausing": false,
+        "loop": false
+    },
+    "64": {
+        "title": "Shanty",
+        "holdToPlay": false,
+        "allowPausing": false,
+        "loop": false
+    },
+    "65": {
+        "title": "Grace",
+        "holdToPlay": false,
+        "allowPausing": false,
+        "loop": false
+    },
+    "66": {
+        "title": "Craven",
+        "holdToPlay": false,
+        "allowPausing": false,
+        "loop": false
+    },
+    "67": {
+        "title": "Crusading",
+        "holdToPlay": false,
+        "allowPausing": false,
+        "loop": false
+    },
+    "72": {
+        "title": "Techno Battle Shizz",
+        "holdToPlay": false,
+        "allowPausing": false,
+        "loop": true
+    }
+}
