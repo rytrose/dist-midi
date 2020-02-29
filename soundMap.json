@@ -11,6 +11,12 @@
         "allowPausing": false,
         "loop": false
     },
+    "50": {
+        "title": "Buzz",
+        "holdToPlay": true,
+        "allowPausing": false,
+        "loop": false
+    },
     "60": {
         "title": "Vernal Crusade Theme",
         "holdToPlay": false,
